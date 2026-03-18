@@ -1,0 +1,9 @@
+# 忽略所有名为 build 的文件夹（任何层级）
+**/build/
+build/
+
+# 忽略 .vscode 文件
+.vscode
+
+# 只忽略特定的 dragon_871k.obj 文件（不忽略其他 .obj）
+**/dragon_871k.obj

@@ -1,0 +1,19 @@
+#ifndef __RAY_HPP__
+#define __RAY_HPP__
+
+#include <glm/glm.hpp>
+
+struct Ray {
+    glm::vec3 origin;  // 起点
+    glm::vec3 direction;  // 光线方向
+
+    glm::vec3 hit(float t) const {return origin + t * direction;}  // 根据参数t计算光线与物体的交点坐标
+};
+
+struct HitInfo{
+    float t;  // 光线与物体的交点距离
+    glm::vec3 hit_point;  // 光线与物体的交点坐标
+    glm::vec3 normal;  // 光线与物体交点处的法线
+};
+
+#endif // __RAY_HPP__
