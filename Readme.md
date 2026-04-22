@@ -1,16 +1,39 @@
 # 基于 C++17 的高性能 CPU 路径追踪渲染引擎
 
-学习项目
-
-原作者项目地址：https://github.com/HeaoYe/CPUPathTracing
-
-原作者视频链接：https://www.bilibili.com/video/BV1MJYAeYEDk
-
 ## 核心摘要
 
 本项目是一个从零手写的基于 CPU 的物理级光线追踪（Path Tracing）渲染器。项目采用 C++17 标准，脱离繁重的图形 API，仅依赖 `glm` 进行数学计算和 `rapidobj` 进行模型加载。通过历经 13 个大版本的迭代，项目实现了从单线程光线投射到多线程、SAH-BVH 加速、俄罗斯轮盘赌、多态材质系统以及复杂大场景渲染的完整路径追踪架构。
 
 ---
+## 最终效果
+![image0](assets/image0.png)
+
+![image](assets/image.png) 
+
+![image2](assets/image2.png) 
+
+![image3](assets/image3.png) 
+
+![image4](assets/image4.png) 
+
+![image5](assets/image5.png)
+---
+
+## 效果展示
+相交测试 [intersection_test.ppm](assets/intersection_test.ppm)
+
+模型渲染 [model_render.ppm](assets/model_render.ppm)
+
+平面与场景 [plane_and_scene.ppm](assets/plane_and_scene.ppm)
+
+光线追踪 [simple_rt](assets/simple_rt.ppm) 
+光线追踪spp128 [simple_rt_spp128](assets/simple_rt_spp128.ppm)
+
+法线贴图：[normal](assets/normal.ppm) 多物体法线贴图[normal_1](assets/normal_1.ppm)
+
+debug热力图：[BD](assets/BD.ppm) [BTC](assets/BTC.ppm) [TTC](assets/TTC.ppm)
+
+渲染效果：[RT_12800](assets/RT_12800.ppm) [PT_2176](assets/PT_2176.ppm)
 
 ## 第一部分：项目核心类与模块架构分析
 
