@@ -10,8 +10,10 @@
 #include "util/rgb.hpp"
 #include "material/diffuse_material.hpp"
 #include "material/specular_material.hpp"
+#include "material/dielectric_material.hpp"
+#include "material/conductor_material.hpp"
+#include "material/ground_material.hpp"
 #include "renderer/normal_renderer.hpp"
-// #include "renderer/simple_rt_renderer.hpp"
 #include "renderer/debug_renderer.hpp"
 #include "renderer/path_tracing_renderer.hpp"
 
@@ -19,66 +21,50 @@
 int main(){
 
     Film film{1920, 1080};
-    Camera camera{film, {-12, 5, -12}, {0, 0, 0}, 45};
+    Camera camera{film, {-10, 1.5, 0}, {0, 0, 0}, 45};
 
     Model model("models/dragon_871k.obj");
-    Sphere sphere{
-        {0, 0, 0}, 
-        1
-    };
-    Plane plane{
-        {0, 0, 0}, 
-        {0, 1, 0}
-    };
-
-
-    Scene scene{};
+    Sphere sphere{ {0, 0, 0}, 1};
+    Plane plane{{0, 0, 0}, {0, 1, 0}};
     
-    RNG rng{1234};
-    for(int i = 0; i < 10000; i++){
-        glm::vec3 random_pos{
-            rng.uniform() * 100 - 50,
-            rng.uniform() * 2,
-            rng.uniform() * 100 - 50,
-        };
-        float u = rng.uniform();
-        if(u < 0.9){
-            Material *material;
-            if(rng.uniform() > 0.5){
-                material = new SpecularMaterial{RGB(202, 159, 117)};
-            } else {
-                material = new DiffuseMaterial{RGB(202, 159, 117)};
-            }
-            scene.addShape(
-                model,
-                material,
-                random_pos,
-                {1, 1, 1},
-                {rng.uniform() * 360, rng.uniform() * 360, rng.uniform() * 360}
-            );
-        } else if (u < 0.95){
-            scene.addShape(
-                sphere,
-                new SpecularMaterial{{rng.uniform(), rng.uniform(), rng.uniform()}},
-                random_pos,
-                {0.4, 0.4, 0.4}
-            );
-        } else {
-            random_pos.y += 6;
-            auto *material = new DiffuseMaterial{{0, 0, 0}};
-            material->setEmissive({rng.uniform() * 4, rng.uniform() * 4, rng.uniform() * 4});
-            scene.addShape(
-                sphere, 
-                material,
-                random_pos
-            );
-        }
+    Scene scene{};
+    for (int i = -3; i <= 3; i ++) {
+        scene.addShape(
+            sphere,
+            new DielectricMaterial { 1.f + 0.2f * (i + 3), { 1, 1, 1 } },
+            { 0, 0.5, i * 2 },
+            { 0.8, 0.8, 0.8 }
+        );
+    }
+
+    for (int i = -3; i <= 3; i ++) {
+        glm::vec3 c = RGB::GenerateHeatmapRGB((i + 3.f) / 6.f);
+        scene.addShape(
+            sphere,
+            new ConductorMaterial {
+                glm::vec3(2.f - c * 2.f),
+                glm::vec3(2.f + c * 3.f),
+            },
+            { 0, 2.5, i * 2 },
+            { 0.8, 0.8, 0.8 }
+        );
     }
     scene.addShape(
-        plane, 
-        new DiffuseMaterial{RGB(120, 204, 157)},
-        {0, -0.5, 0}
+        model,
+        new DielectricMaterial { 1.8, RGB(128, 191, 131) },
+        { -5, 0.4, 1.5 },
+        { 2, 2, 2 }
     );
+    scene.addShape(
+        model,
+        new ConductorMaterial { { 0.1, 1.2, 1.8 }, { 5, 2.5, 2 } },
+        { -5, 0.4, -1.5 },
+        { 2, 2, 2 }
+    );
+    scene.addShape(plane, new GroundMaterial { RGB(120, 204, 157) }, { 0, -0.5, 0 });
+    auto *light_material = new DiffuseMaterial { { 1, 1, 1 } };
+    light_material->setEmissive({ 0.95, 0.95, 1 });
+    scene.addShape(plane, light_material, { 0, 10, 0 });
     scene.build();    // build BVH
 
     NormalRenderer normal_render{camera, scene};
@@ -89,13 +75,9 @@ int main(){
     TriangleTestCountRenderer ttc_renderer{camera, scene};
     ttc_renderer.render(1, "TTC.ppm");
 
-    // 光线追踪
-    // SimpleRTRenderer simple_rt_renderer{camera, scene};
-    // simple_rt_renderer.render(12800, "RT_12800.ppm");
-
     // 路径追踪
     PathTracingRenderer path_tracing_renderer{camera, scene};
-    path_tracing_renderer.render(2176, "PT_2176.ppm");
+    path_tracing_renderer.render(128, "PT_cosine_test_128.ppm");
 
     return 0;
 }

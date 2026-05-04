@@ -6,7 +6,8 @@
 class SpecularMaterial : public Material {
 public:
     SpecularMaterial(const glm::vec3 &albedo) : albedo(albedo) {}
-    glm::vec3 sampleBRDF(const glm::vec3 &view_direction, glm::vec3 &beta, const RNG &rng) const override;
+    // BSDF = BRDF + BTDF (双向散射分布函数 = 双向反射分布函数 + 双向透射分布函数) 
+    glm::vec3 sampleBSDF(const glm::vec3 &hit_point, const glm::vec3 &view_direction, glm::vec3 &beta, const RNG &rng) const override;
 private:
     glm::vec3 albedo {};
 };

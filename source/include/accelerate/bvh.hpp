@@ -22,12 +22,13 @@ struct BVHTreeNode {
 // 线性节点  32字节对齐
 struct alignas(32) BVHNode{
     Bounds bounds {};
+    // union共享内存4字节，child1_index和triangle_index不会同时使用
     union{
-        int child1_index;
-        int triangle_index;
+        int child1_index;   // 内部结点：右孩子下标
+        int triangle_index; // 叶子结点：三角形在ordered_triangles中的起始下标
     };
-    uint16_t triangle_count;
-    uint8_t split_axis;
+    uint16_t triangle_count;    // 叶子结点：三角形数量，内部结点：0
+    uint8_t split_axis;         // 分割轴
 };
 
 // 用于debug

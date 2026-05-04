@@ -1,14 +1,15 @@
-#ifndef __DIFFUSE_MATERIAL_HPP__
-#define __DIFFUSE_MATERIAL_HPP__
+
+#ifndef GROUND_MATERIAL_HPP
+#define GROUND_MATERIAL_HPP
 
 #include "material.hpp"
 
-class DiffuseMaterial : public Material {
+class GroundMaterial : public Material {
 public:
-    DiffuseMaterial(const glm::vec3 &albedo) : albedo(albedo) {}
+    GroundMaterial(const glm::vec3 &albedo) : albedo(albedo) {}
     glm::vec3 sampleBSDF(const glm::vec3 &hit_point, const glm::vec3 &view_direction, glm::vec3 &beta, const RNG &rng) const override;
 private:
     glm::vec3 albedo {};
 };
 
-#endif // __DIFFUSE_MATERIAL_HPP__
+#endif // GROUND_MATERIAL_HPP
