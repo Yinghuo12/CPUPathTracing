@@ -46,7 +46,7 @@ public:
             return RGB{ 255, 0, 0};  // 错误颜色: 红色
         } 
         // 线性插值
-        float idx_float = t * color_pallet.size();
+        float idx_float = t * (color_pallet.size() - 1);
         size_t idx = glm::floor(idx_float);
         return Lerp(color_pallet[idx], color_pallet[idx + 1], glm::fract(idx_float));  // fract: 求小数部分
 

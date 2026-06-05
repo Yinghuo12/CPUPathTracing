@@ -21,6 +21,7 @@
 int main(){
 
     Film film{1920, 1080};
+    // Film film{192 * 4, 108 * 4};
     Camera camera{film, {-10, 1.5, 0}, {0, 0, 0}, 45};
 
     Model model("models/dragon_871k.obj");
@@ -187,3 +188,10 @@ int main(){
 // 解决陷入死循环：SmpleRTRenderer::render 循环结束条件是光线没有与任何物体相交，但是由于浮点数误差，可能导致一根光线进入物体内部，这样不管经过多少次反弹，都不会离开物体的内部，导致死循环
 // 解决方案 规定光线弹射最大次数  之后渲染10000个物体：
 // Profile "render 32spp simple_rt_32.ppm": 136277ms
+
+
+
+// non thread local RNG
+//render 128spp:60199ms
+// with thread local RNG
+//render 128spp:43594ms

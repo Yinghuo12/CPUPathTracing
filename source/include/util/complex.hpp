@@ -35,7 +35,7 @@ inline Complex operator*(Complex lhs, float rhs) {
 inline Complex operator/(Complex lhs, Complex rhs) {
     float denom = 1.f / (rhs.c * rhs.c + rhs.d * rhs.d);
     return {
-        (lhs.a * rhs.c - lhs.b * rhs.d) * denom,
+        (lhs.a * rhs.c + lhs.b * rhs.d) * denom,
         (lhs.b * rhs.c - lhs.a * rhs.d) * denom
     };
 }
@@ -50,8 +50,10 @@ inline float norm(Complex rhs) {
 
 inline Complex sqrt(Complex rhs) {
     float rhs_norm = norm(rhs);
+    // 提取虚部 b 的符号
+    float sign_b = (rhs.b < 0.f) ? -1.f : 1.f;
     return {
-        std::sqrt((rhs_norm + rhs.a) * 0.5f),
-        std::sqrt((rhs_norm - rhs.a) * 0.5f),
+        std::sqrt(std::max(0.f, rhs_norm + rhs.a) * 0.5f),
+        sign_b * std::sqrt(std::max(0.f, rhs_norm - rhs.a) * 0.5f),
     };
 }

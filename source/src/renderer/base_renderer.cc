@@ -15,7 +15,7 @@ void BaseRenderer::render(size_t spp, const std::filesystem::path &filename) {
         thread_pool.parallelFor(film.getWidth(), film.getHeight(), [&](size_t x, size_t y) {
             for(int i = 0; i < increase; i++){
                 // 渲染
-                film.addSample(x, y, renderPixel({x,y}));
+                film.addSample(x, y, renderPixel({x, y, current_spp + i}));
             }
             // 更新进度条
             progress.update(increase);

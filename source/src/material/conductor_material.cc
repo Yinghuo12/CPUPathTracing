@@ -1,7 +1,7 @@
 #include "material/conductor_material.hpp"
 #include "util/complex.hpp"
 
-glm::vec3 ConductorMaterial::sampleBSDF(const glm::vec3 &hit_point, const glm::vec3 &view_direction, glm::vec3 &beta, const RNG &rng) const {
+std::optional<BSDFSample> ConductorMaterial::sampleBSDF(const glm::vec3 &hit_point, const glm::vec3 &view_direction, const RNG &rng) const {
     glm::vec3 fr {};
     // 菲涅尔方程计算反射率
     for (size_t i = 0; i < 3; i ++) {
@@ -14,9 +14,9 @@ glm::vec3 ConductorMaterial::sampleBSDF(const glm::vec3 &hit_point, const glm::v
         Complex r_parl = (etat_div_etai * cos_theta_i - cos_theta_t) / (etat_div_etai * cos_theta_i + cos_theta_t);
         Complex r_perp = (cos_theta_i - etat_div_etai * cos_theta_t) / (cos_theta_i + etat_div_etai * cos_theta_t);
 
-        fr[i] = 0.5 * (norm(r_parl) + norm(r_perp));
+        // fr[i] = 0.5 * (norm(r_parl) + norm(r_perp))i;
+        fr[i] = 0.5 * (norm(r_parl) * norm(r_parl) + norm(r_perp) * norm(r_perp));//修复
     }
-
-    beta *= fr;
-    return { -view_direction.x, view_direction.y, -view_direction.z };
+    glm::vec3 light_direction {-view_direction.x, view_direction.y, -view_direction.z};  // 镜面反射
+    return BSDFSample { fr / glm::abs(light_direction.y), 1, light_direction };  // 理论上应该除以|cos(theta)|，但由于light_direction是镜面反射，所以cos(theta) = light_direction.y
 }

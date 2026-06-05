@@ -20,6 +20,10 @@ inline glm::vec3 CosineSampleHemisphere(const glm::vec2 &u) {
     return { r * glm::cos(phi), glm::sqrt(1 - r * r), r * glm::sin(phi) };
 }
 
+inline float CosineSampleHemispherePDF(const glm::vec3 &direction) {
+    return direction.y / PI;  // 余弦重要性采样的pdf为cos(theta)/pi，其中theta是方向与法线的夹角，cos(theta) = direction.y
+}
+
 // 接受拒绝采样
 inline glm::vec3 UniformSampleHemisphere(const RNG &rng) {
     glm::vec3 result;

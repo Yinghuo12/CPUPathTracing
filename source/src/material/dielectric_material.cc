@@ -17,7 +17,7 @@ float Fresnel(float etai_div_etat, float cos_theta_t, float &cos_theta_i) {
     return 0.5 * (r_parl * r_parl + r_perp * r_perp);
 }
 
-glm::vec3 DielectricMaterial::sampleBSDF(const glm::vec3 &hit_point, const glm::vec3 &view_direction, glm::vec3 &beta, const RNG &rng) const {
+std::optional<BSDFSample> DielectricMaterial::sampleBSDF(const glm::vec3 &hit_point, const glm::vec3 &view_direction, const RNG &rng) const {
     float etai_div_etat = ior;
     glm::vec3 normal = { 0, 1, 0 };
     float cos_theta_t = view_direction.y;
@@ -34,11 +34,11 @@ glm::vec3 DielectricMaterial::sampleBSDF(const glm::vec3 &hit_point, const glm::
     // 根据Fresnel采样反射与透射
     // 反射
     if (rng.uniform() <= fr) {
-        beta *= albedo_r;
-        return glm::vec3 { -view_direction.x, view_direction.y, -view_direction.z };
+        glm::vec3 light_direction {-view_direction.x, view_direction.y, -view_direction.z};  // 镜面反射
+        return BSDFSample { albedo_r / glm::abs(light_direction.y), 1, light_direction };  // 理论上应该除以|cos(theta)|，但由于light_direction是镜面反射，所以cos(theta) = light_direction.y
     // 透射
     } else {
-        beta *= albedo_t / (etai_div_etat * etai_div_etat);
-        return glm::vec3 { (-view_direction / etai_div_etat ) + (cos_theta_t / etai_div_etat - cos_theta_i) * normal };  // 计算透射方向
+        glm::vec3 light_direction {(-view_direction / etai_div_etat) + (cos_theta_t / etai_div_etat - cos_theta_i) * normal};  // 计算透射方向
+        return BSDFSample { albedo_t / glm::abs(light_direction.y), 1, light_direction };  // 理论上应该除以|cos(theta)|，但由于light_direction是透射方向，所以cos(theta) = cos_theta_t
     }
 }
