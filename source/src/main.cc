@@ -22,7 +22,7 @@ int main(){
 
     Film film{1920, 1080};
     // Film film{192 * 4, 108 * 4};
-    Camera camera{film, {-10, 1.5, 0}, {0, 0, 0}, 45};
+    Camera camera{film, {-9.5, 1.5, 0}, {0, 0, 0}, 45};
 
     Model model("models/dragon_871k.obj");
     Sphere sphere{ {0, 0, 0}, 1};
@@ -32,7 +32,12 @@ int main(){
     for (int i = -3; i <= 3; i ++) {
         scene.addShape(
             sphere,
-            new DielectricMaterial { 1.f + 0.2f * (i + 3), { 1, 1, 1 } },
+            new DielectricMaterial {
+                1.f + 0.2f * (i + 3),
+                { 1, 1, 1 },
+                (3.f - i) / 18.f,
+                (3.f - i) / 6.f,
+            },
             { 0, 0.5, i * 2 },
             { 0.8, 0.8, 0.8 }
         );
@@ -45,6 +50,8 @@ int main(){
             new ConductorMaterial {
                 glm::vec3(2.f - c * 2.f),
                 glm::vec3(2.f + c * 3.f),
+                (3.f - i) / 6.f,
+                (3.f - i) / 18.f
             },
             { 0, 2.5, i * 2 },
             { 0.8, 0.8, 0.8 }
@@ -52,20 +59,20 @@ int main(){
     }
     scene.addShape(
         model,
-        new DielectricMaterial { 1.8, RGB(128, 191, 131) },
+        new DielectricMaterial { 1.8, RGB(128, 211, 131), 0.4, 0.4 },
         { -5, 0.4, 1.5 },
         { 2, 2, 2 }
     );
     scene.addShape(
         model,
-        new ConductorMaterial { { 0.1, 1.2, 1.8 }, { 5, 2.5, 2 } },
+        new ConductorMaterial { { 0.1, 1.2, 1.8 }, { 5, 2.5, 2 }, 0.4, 0.4 },
         { -5, 0.4, -1.5 },
         { 2, 2, 2 }
     );
     scene.addShape(plane, new GroundMaterial { RGB(120, 204, 157) }, { 0, -0.5, 0 });
     auto *light_material = new DiffuseMaterial { { 1, 1, 1 } };
-    light_material->setEmissive({ 0.95, 0.95, 1 });
-    scene.addShape(plane, light_material, { 0, 10, 0 });
+    light_material->setEmissive({ 0.95 * 5, 0.95 * 5, 1 * 5 });
+    scene.addShape(sphere, light_material, { -2, 6, 0 }, {2, 2, 2});
     scene.build();    // build BVH
 
     NormalRenderer normal_render{camera, scene};
@@ -78,7 +85,8 @@ int main(){
 
     // 路径追踪
     PathTracingRenderer path_tracing_renderer{camera, scene};
-    path_tracing_renderer.render(128, "PT_cosine_test_128.ppm");
+    // path_tracing_renderer.render(128, "PT_microfacet_128.ppm");
+    path_tracing_renderer.render(4096, "4096.ppm");
 
     return 0;
 }

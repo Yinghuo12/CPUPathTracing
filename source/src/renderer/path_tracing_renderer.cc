@@ -25,6 +25,11 @@ glm::vec3 PathTracingRenderer::renderPixel(const glm::ivec3 &pixel_coord) {
             glm::vec3 light_direction;
             if(hit_info->material){
                 glm::vec3 view_direction = frame.localFromWorld(-ray.direction);
+                // 如果view_direction.y为0，说明光线与表面平行，这时我们无法根据微表面理论采样出一个合理的光线方向，所以直接让beta为0，结束路径追踪
+                if(view_direction.y == 0) {
+                    ray.origin = hit_info->hit_point;
+                    continue;
+                }
                 auto bsdf_sample = hit_info->material->sampleBSDF(hit_info->hit_point, view_direction, rng);
                 if(!bsdf_sample.has_value()){
                     break;

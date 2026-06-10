@@ -14,6 +14,9 @@ void Film::save(const std::filesystem::path &filename){ // 需要C++ 17
     std::vector<uint8_t> buffer(width * height * 3);  // RGB每个分量占8bit，所以一个像素占3个字节
     thread_pool.parallelFor(width, height, [&](size_t x, size_t y){
         auto pixel = getPixel(x, y);   // 获取一个像素
+        if(pixel.sample_count == 0) {
+            return; // 如果这个像素没有采样点，说明它是黑色的，我们就不需要写入buffer了
+        }
         RGB rgb(pixel.color / static_cast<float>(pixel.sample_count));  // 平均颜色
 
         auto idx = (y * width + x) * 3;  // 计算像素在buffer中的位置

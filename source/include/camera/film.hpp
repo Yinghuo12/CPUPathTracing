@@ -21,6 +21,10 @@ public:
     size_t getHeight() const { return height; };
     Pixel getPixel(size_t x, size_t y) const { return pixels[y * width + x]; };
     void addSample(size_t x, size_t y, const glm::vec3 &color){
+        // 由于路径追踪中可能会出现NaN值，如果不进行判断直接保存到像素中，最终会导致整张图像变成黑色
+        if(glm::any(glm::isnan(color))){
+            return;
+        }
         pixels[y * width + x].color += color;
         pixels[y * width + x].sample_count++;
     } 

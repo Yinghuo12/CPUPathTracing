@@ -2,8 +2,8 @@
 
 Frame::Frame(const glm::vec3 &normal){
     y_axis = glm::normalize(normal);
-    glm::vec3 up = glm::abs(normal.y) < 0.99999 ? glm::vec3(0, 1, 0) : glm::vec3(0, 0, 1);  // 如果法线接近垂直于y轴，则使用(0, 1, 0)作为up向量，否则使用(0, 0, 1)
-    x_axis = glm::normalize(glm::cross(up, y_axis));
+    glm::vec3 up = glm::abs(normal.y) < 0.99999 ? glm::vec3(0, 1, 0) : glm::vec3(0, 0, -1);  // 如果法线接近垂直于y轴，则使用(0, 1, 0)作为up向量
+    x_axis = glm::normalize(-glm::cross(up, y_axis));
     z_axis = glm::normalize(glm::cross(x_axis, y_axis));
 }
 
