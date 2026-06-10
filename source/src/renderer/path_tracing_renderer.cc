@@ -3,7 +3,8 @@
 // #include "sample/spherical.hpp"
 
 glm::vec3 PathTracingRenderer::renderPixel(const glm::ivec3 &pixel_coord) {
-    thread_local RNG rng{static_cast<size_t>(pixel_coord.x * 1000000 + pixel_coord.y + pixel_coord.z * 10000000)};  // 每个线程一个RNG实例，避免竞争
+    thread_local RNG rng{};
+    rng.setSeed(pixel_coord.x + pixel_coord.y * 10000 + pixel_coord.z * 10000 * 10000);  // 每个线程一个RNG实例，避免竞争
 
     auto ray = camera.generateRay(pixel_coord, { rng.uniform(), rng.uniform() });
     glm::vec3 beta = { 1, 1, 1 };

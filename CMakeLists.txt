@@ -13,8 +13,9 @@ set(CMAKE_BUILD_TYPE Release)
 # set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 # 设置编译选项
-project(CPUPathTracing_Version16)
+project(CPUPathTracing_Version17)
 
 add_subdirectory(source)
 add_subdirectory(thirdparty/glm)
 add_subdirectory(thirdparty/rapidobj)
+add_subdirectory(thirdparty/SFML)

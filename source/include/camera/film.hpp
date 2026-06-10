@@ -15,7 +15,7 @@ struct Pixel{
 class Film{
 public:
     Film(size_t width, size_t height);
-    void save(const std::filesystem::path &filename); // 需要C++ 17
+    void save(const std::filesystem::path &filename) const; // 需要C++ 17
 
     size_t getWidth() const { return width; };
     size_t getHeight() const { return height; };
@@ -30,6 +30,13 @@ public:
     } 
 
     void clear(){ pixels.clear(); pixels.resize(width * height); } // 清空所有像素的颜色
+    void setResolution(size_t width, size_t height) { // 设置分辨率
+        this->width = width;
+        this->height = height;
+        pixels.resize(width * height);
+    } 
+    std::vector<uint8_t> generateRGBABuffer(); // 生成RGBA格式的图像数据，方便保存成图片
+
 private:
     size_t width, height;
     std::vector<Pixel> pixels;
